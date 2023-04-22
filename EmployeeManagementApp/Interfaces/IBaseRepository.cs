@@ -1,6 +1,6 @@
 ﻿namespace EmployeeManagementAPI.Interfaces;
 
-public interface IBaseRepository<T> where T : IModel
+public interface IBaseRepository<T> where T : class, IModel
 {
     public ICollection<T> GetAll();
     public T? GetById(int id);
