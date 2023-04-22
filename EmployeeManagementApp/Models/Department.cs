@@ -1,6 +1,8 @@
-﻿namespace EmployeeManagementAPI.Models;
+﻿using EmployeeManagementAPI.Interfaces;
 
-public class Department
+namespace EmployeeManagementAPI.Models;
+
+public class Department : IModel
 {
     public int Id { get; set; }
     public string Name { get; set; }
