@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0160: Převést na namespace pro celý blok
+csharp_style_namespace_declarations = file_scoped
