@@ -1,5 +1,6 @@
 using EmployeeManagementAPI.Data;
 using EmployeeManagementAPI.Interfaces;
+using EmployeeManagementAPI.Mapping;
 using EmployeeManagementAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Dependency injection.
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
