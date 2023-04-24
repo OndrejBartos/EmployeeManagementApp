@@ -21,6 +21,12 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
         return Save();
     }
 
+    public ICollection<Employee> GetEmployeesFromDepartment(int departmentId)
+    {
+        var employees = _context.Employees.Where(e => e.Department.Id == departmentId).ToArray();
+        return employees;
+    }
+
     public bool Update(int departmentId, Employee employee)
     {
         var department = _context.Departments.FirstOrDefault(d => d.Id == departmentId);

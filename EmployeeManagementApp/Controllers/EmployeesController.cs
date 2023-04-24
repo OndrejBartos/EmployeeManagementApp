@@ -34,6 +34,19 @@ public class EmployeesController : ControllerBase
         return Ok(employees);
     }
 
+    [HttpGet("/api/Departments/{id}/employees")]
+    [ProducesResponseType(200, Type = typeof(ICollection<EmployeeDto>))]
+    [ProducesResponseType(400)]
+    public IActionResult GetEmployeesFromDepartment(int id)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var employees = _mapper.Map<ICollection<EmployeeDto>>(_repository.GetEmployeesFromDepartment(id));
+
+        return Ok(employees);
+    }
+
     [HttpGet("{id}")]
     [ProducesResponseType(200, Type = typeof(EmployeeDto))]
     [ProducesResponseType(400)]
@@ -49,6 +62,23 @@ public class EmployeesController : ControllerBase
             return NotFound();
 
         return Ok(employee);
+    }
+
+    [HttpGet("{id}/department")]
+    [ProducesResponseType(200, Type = typeof(Department))]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult GetEmployeeDepartment(int id)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var department = _repository.GetById(id)?.Department;
+
+        if (department is null)
+            return NotFound();
+
+        return Ok(department);
     }
 
     [HttpPost]
