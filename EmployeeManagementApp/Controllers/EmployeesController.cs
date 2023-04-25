@@ -83,6 +83,10 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult CreateEmployee([FromBody] EmployeeDto employee)
     {
         if (!ModelState.IsValid || employee is null)
@@ -103,6 +107,10 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpPut]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult UpdateEmployee([FromBody] EmployeeDto employee)
     {
         if (!ModelState.IsValid || employee is null)
@@ -123,6 +131,10 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult DeleteEmployee(int id)
     {
         if (!ModelState.IsValid)

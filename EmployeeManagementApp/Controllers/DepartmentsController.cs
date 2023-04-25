@@ -50,6 +50,10 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult CreateDepartment([FromBody] Department department)
     {
         if (!ModelState.IsValid || department is null)
@@ -70,6 +74,10 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPut]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult UpdateDepartment([FromBody] Department department)
     {
         if (!ModelState.IsValid || department is null)
@@ -90,6 +98,10 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    [ProducesResponseType(500)]
     public IActionResult DeleteDepartment(int id)
     {
         if (!ModelState.IsValid)
