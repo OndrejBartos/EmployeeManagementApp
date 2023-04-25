@@ -5,6 +5,10 @@ using System.Linq.Expressions;
 
 namespace EmployeeManagementAPI.Repositories;
 
+/// <summary>
+/// Implementation of the base repository interface that contains all CRUD operations.
+/// </summary>
+/// <typeparam name="T">Entity type</typeparam>
 public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
 {
     protected readonly DataContext _context;
