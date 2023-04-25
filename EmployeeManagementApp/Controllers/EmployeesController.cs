@@ -34,7 +34,7 @@ public class EmployeesController : ControllerBase
         return Ok(employees);
     }
 
-    [HttpGet("/api/Departments/{id}/employees")]
+    [HttpGet("/api/departments/{id}/employees")]
     [ProducesResponseType(200, Type = typeof(ICollection<EmployeeDto>))]
     [ProducesResponseType(400)]
     public IActionResult GetEmployeesFromDepartment(int id)
