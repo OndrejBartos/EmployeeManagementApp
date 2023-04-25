@@ -73,7 +73,8 @@ public class EmployeesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var department = _repository.GetById(id)?.Department;
+        var employee = _repository.GetById(id, e => e.Department);
+        var department = employee?.Department;
 
         if (department is null)
             return NotFound();
