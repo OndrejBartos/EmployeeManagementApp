@@ -22,12 +22,12 @@ public class DepartmentsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(ICollection<Department>))]
     [ProducesResponseType(400)]
-    public IActionResult GetDepartments()
+    public async Task<IActionResult> GetDepartments()
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var departments = _repository.GetAll();
+        var departments = await _repository.GetAll();
 
         return Ok(departments);
     }
@@ -36,12 +36,12 @@ public class DepartmentsController : ControllerBase
     [ProducesResponseType(200, Type = typeof(Department))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult GetDepartment(int id)
+    public async Task<IActionResult> GetDepartment(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var department = _repository.GetById(id);
+        var department = await _repository.GetById(id);
 
         if (department is null)
             return NotFound();
@@ -54,17 +54,19 @@ public class DepartmentsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult CreateDepartment([FromBody] Department department)
+    public async Task<IActionResult> CreateDepartment([FromBody] Department department)
     {
         if (!ModelState.IsValid || department is null)
             return BadRequest(ModelState);
 
-        if (_repository.Exists(department.Id))
+        var exists = await _repository.Exists(department.Id);
+        if (exists)
         {
             return Conflict($"Department with ID {department.Id} already exists.");
         }
 
-        if (!_repository.Create(department))
+        var created = await _repository.Create(department);
+        if (!created)
         {
             ModelState.AddModelError("", "Something went wrong while creating department.");
             return StatusCode(500, ModelState);
@@ -78,17 +80,19 @@ public class DepartmentsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult UpdateDepartment([FromBody] Department department)
+    public async Task<IActionResult> UpdateDepartment([FromBody] Department department)
     {
         if (!ModelState.IsValid || department is null)
             return BadRequest(ModelState);
 
-        if (!_repository.Exists(department.Id))
+        var exists = await _repository.Exists(department.Id);
+        if (!exists)
         {
             return Conflict($"Department with ID {department.Id} doesn't exists.");
         }
 
-        if (!_repository.Update(department))
+        var updated = await _repository.Update(department);
+        if (!updated)
         {
             ModelState.AddModelError("", "Something went wrong while updating department.");
             return StatusCode(500, ModelState);
@@ -102,17 +106,19 @@ public class DepartmentsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult DeleteDepartment(int id)
+    public async Task<IActionResult> DeleteDepartment(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_repository.Exists(id))
+        var exists = await _repository.Exists(id);
+        if (!exists)
         {
             return Conflict($"Department with ID {id} doesn't exists.");
         }
 
-        if (!_repository.Delete(id))
+        var deleted = await _repository.Delete(id);
+        if (!deleted)
         {
             ModelState.AddModelError("", "Something went wrong while deleting department.");
             return StatusCode(500, ModelState);

@@ -1,6 +1,7 @@
 ﻿using EmployeeManagementAPI.Data;
 using EmployeeManagementAPI.Interfaces;
 using EmployeeManagementAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementAPI.Repositories;
 
@@ -8,8 +9,8 @@ public class AdministratorRepository : BaseRepository<Administrator>, IAdministr
 {
     public AdministratorRepository(DataContext context) : base(context) { }
 
-    public bool Exists(string username, string password)
+    public async Task<bool> Exists(string username, string password)
     {
-        return _context.Administrators.Any(a => a.Username == username && a.Password == password);
+        return await _context.Administrators.AnyAsync(a => a.Username == username && a.Password == password);
     }
 }

@@ -24,12 +24,12 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(ICollection<EmployeeDto>))]
     [ProducesResponseType(400)]
-    public IActionResult GetEmployees()
+    public async Task<IActionResult> GetEmployees()
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var employees = _mapper.Map<ICollection<EmployeeDto>>(_repository.GetAll());
+        var employees = _mapper.Map<ICollection<EmployeeDto>>(await _repository.GetAll());
 
         return Ok(employees);
     }
@@ -37,12 +37,12 @@ public class EmployeesController : ControllerBase
     [HttpGet("/api/departments/{id}/employees")]
     [ProducesResponseType(200, Type = typeof(ICollection<EmployeeDto>))]
     [ProducesResponseType(400)]
-    public IActionResult GetEmployeesFromDepartment(int id)
+    public async Task<IActionResult> GetEmployeesFromDepartment(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var employees = _mapper.Map<ICollection<EmployeeDto>>(_repository.GetEmployeesFromDepartment(id));
+        var employees = _mapper.Map<ICollection<EmployeeDto>>(await _repository.GetEmployeesFromDepartment(id));
 
         return Ok(employees);
     }
@@ -51,12 +51,12 @@ public class EmployeesController : ControllerBase
     [ProducesResponseType(200, Type = typeof(EmployeeDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult GetEmployee(int id)
+    public async Task<IActionResult> GetEmployee(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var employee = _mapper.Map<EmployeeDto>(_repository.GetById(id));
+        var employee = _mapper.Map<EmployeeDto>(await _repository.GetById(id));
 
         if (employee is null)
             return NotFound();
@@ -68,12 +68,12 @@ public class EmployeesController : ControllerBase
     [ProducesResponseType(200, Type = typeof(Department))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult GetEmployeeDepartment(int id)
+    public async Task<IActionResult> GetEmployeeDepartment(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var employee = _repository.GetById(id, e => e.Department);
+        var employee = await _repository.GetById(id, e => e.Department);
         var department = employee?.Department;
 
         if (department is null)
@@ -87,17 +87,19 @@ public class EmployeesController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult CreateEmployee([FromBody] EmployeeDto employee)
+    public async Task<IActionResult> CreateEmployee([FromBody] EmployeeDto employee)
     {
         if (!ModelState.IsValid || employee is null)
             return BadRequest(ModelState);
 
-        if (_repository.Exists(employee.Id))
+        var exists = await _repository.Exists(employee.Id);
+        if (exists)
         {
             return Conflict($"Employee with ID {employee.Id} already exists.");
         }
 
-        if (!_repository.Create(employee.DepartmentId, _mapper.Map<Employee>(employee)))
+        var created = await _repository.Create(employee.DepartmentId, _mapper.Map<Employee>(employee));
+        if (!created)
         {
             ModelState.AddModelError("", "Something went wrong while creating employee.");
             return StatusCode(500, ModelState);
@@ -111,17 +113,19 @@ public class EmployeesController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult UpdateEmployee([FromBody] EmployeeDto employee)
+    public async Task<IActionResult> UpdateEmployee([FromBody] EmployeeDto employee)
     {
         if (!ModelState.IsValid || employee is null)
             return BadRequest(ModelState);
 
-        if (!_repository.Exists(employee.Id))
+        var exists = await _repository.Exists(employee.Id);
+        if (!exists)
         {
             return Conflict($"Employee with ID {employee.Id} doesn't exists.");
         }
 
-        if (!_repository.Update(employee.DepartmentId, _mapper.Map<Employee>(employee)))
+        var updated = await _repository.Update(employee.DepartmentId, _mapper.Map<Employee>(employee));
+        if (!updated)
         {
             ModelState.AddModelError("", "Something went wrong while updating employee.");
             return StatusCode(500, ModelState);
@@ -135,17 +139,19 @@ public class EmployeesController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
     [ProducesResponseType(500)]
-    public IActionResult DeleteEmployee(int id)
+    public async Task<IActionResult> DeleteEmployee(int id)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_repository.Exists(id))
+        var exists = await _repository.Exists(id);
+        if (!exists)
         {
             return Conflict($"Employee with ID {id} doesn't exists.");
         }
 
-        if (!_repository.Delete(id))
+        var deleted = await _repository.Delete(id);
+        if (!deleted)
         {
             ModelState.AddModelError("", "Something went wrong while deleting employee.");
             return StatusCode(500, ModelState);

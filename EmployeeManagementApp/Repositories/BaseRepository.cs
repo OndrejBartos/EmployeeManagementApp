@@ -18,41 +18,29 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
         _context = context;
     }
 
-    public bool Create(T entity)
+    public async Task<bool> Create(T entity)
     {
         _context.Set<T>().Add(entity);
-        return Save();
+        return await Save();
     }
 
-    public bool Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var entity = GetById(id);
+        var entity = await GetById(id);
 
         if (entity is null)
             return false;
 
         _context.Set<T>().Remove(entity);
-        return Save();
+        return await Save();
     }
 
-    public bool Exists(int id)
+    public async Task<bool> Exists(int id)
     {
-        return _context.Set<T>().Any(entity => entity.Id == id);
+        return await _context.Set<T>().AnyAsync(entity => entity.Id == id);
     }
 
-    public ICollection<T> GetAll(Expression<Func<T, object>>? include = null)
-    {
-        var query = _context.Set<T>().AsQueryable();
-
-        if (include != null)
-        {
-            query = query.Include(include);
-        }
-
-        return query.ToArray();
-    }
-
-    public T? GetById(int id, Expression<Func<T, object>>? include = null)
+    public async Task<ICollection<T>> GetAll(Expression<Func<T, object>>? include = null)
     {
         var query = _context.Set<T>().AsQueryable();
 
@@ -61,23 +49,35 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
             query = query.Include(include);
         }
 
-        return query.FirstOrDefault(entity => entity.Id == id);
+        return await query.ToArrayAsync();
     }
 
-    public bool Update(T entity)
+    public async Task<T?> GetById(int id, Expression<Func<T, object>>? include = null)
+    {
+        var query = _context.Set<T>().AsQueryable();
+
+        if (include != null)
+        {
+            query = query.Include(include);
+        }
+
+        return await query.FirstOrDefaultAsync(entity => entity.Id == id);
+    }
+
+    public async Task<bool> Update(T entity)
     {
         if (entity is null)
             return false;
 
         _context.Set<T>().Update(entity);
-        return Save();
+        return await Save();
     }
 
-    protected bool Save()
+    protected async Task<bool> Save()
     {
         try
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch

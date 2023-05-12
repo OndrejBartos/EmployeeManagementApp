@@ -31,12 +31,13 @@ public class IdentityController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
-    public IActionResult GenerateToken([FromBody] TokenGenerationRequest request)
+    public async Task<IActionResult> GenerateToken([FromBody] TokenGenerationRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest();
 
-        if (!_repository.Exists(request.Username, request.Password))
+        var valid = await _repository.Exists(request.Username, request.Password);
+        if (!valid)
             return Unauthorized();
 
         var claims = new[]

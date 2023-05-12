@@ -4,5 +4,5 @@ namespace EmployeeManagementAPI.Interfaces;
 
 public interface IAdministratorRepository : IBaseRepository<Administrator>
 {
-    public bool Exists(string username, string password);
+    public Task<bool> Exists(string username, string password);
 }

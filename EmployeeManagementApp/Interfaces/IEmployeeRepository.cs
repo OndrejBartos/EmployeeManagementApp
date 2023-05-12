@@ -4,7 +4,7 @@ namespace EmployeeManagementAPI.Interfaces;
 
 public interface IEmployeeRepository : IBaseRepository<Employee> 
 {
-    bool Create(int departmentId, Employee employee);
-    bool Update(int departmentId, Employee employee);
-    ICollection<Employee> GetEmployeesFromDepartment(int departmentId);
+    public Task<bool> Create(int departmentId, Employee employee);
+    public Task<bool> Update(int departmentId, Employee employee);
+    public Task<ICollection<Employee>> GetEmployeesFromDepartment(int departmentId);
 }

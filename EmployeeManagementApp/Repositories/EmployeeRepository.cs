@@ -8,7 +8,7 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 {
     public EmployeeRepository(DataContext context) : base(context) { }
 
-    public bool Create(int departmentId, Employee employee)
+    public async Task<bool> Create(int departmentId, Employee employee)
     {
         var department = _context.Departments.FirstOrDefault(d => d.Id == departmentId);
 
@@ -17,17 +17,16 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
         // Copy over department object and call base class create method.
         employee.Department = department;
-        Create(employee);
-        return Save();
+        return await Create(employee);
     }
 
-    public ICollection<Employee> GetEmployeesFromDepartment(int departmentId)
+    public async Task<ICollection<Employee>> GetEmployeesFromDepartment(int departmentId)
     {
         var employees = _context.Employees.Where(e => e.Department.Id == departmentId).ToArray();
         return employees;
     }
 
-    public bool Update(int departmentId, Employee employee)
+    public async Task<bool> Update(int departmentId, Employee employee)
     {
         var department = _context.Departments.FirstOrDefault(d => d.Id == departmentId);
 
@@ -36,7 +35,6 @@ public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
 
         // Copy over department object and call base class update method.
         employee.Department = department;
-        Update(employee);
-        return Save();
+        return await Update(employee);
     }
 }
