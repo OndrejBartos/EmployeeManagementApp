@@ -1,6 +1,5 @@
 using EmployeeManagementAPI.Data;
 using EmployeeManagementAPI.Interfaces;
-using EmployeeManagementAPI.Mapping;
 using EmployeeManagementAPI.Repositories;
 using EmployeeManagementAPI.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +41,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Dependency injection.
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IAdministratorRepository, AdministratorRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

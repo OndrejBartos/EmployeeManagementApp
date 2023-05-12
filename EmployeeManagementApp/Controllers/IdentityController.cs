@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EmployeeManagementAPI.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,20 +18,26 @@ public class TokenGenerationRequest
 [ApiController]
 public class IdentityController : ControllerBase
 {
+    private readonly IAdministratorRepository _repository;
     private readonly IConfiguration _config;
     private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(1);
 
-    public IdentityController(IConfiguration config)
+    public IdentityController(IAdministratorRepository repository, IConfiguration config)
     {
+        _repository = repository;
         _config = config;
     }
 
     [HttpPost]
     [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
     public IActionResult GenerateToken([FromBody] TokenGenerationRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest();
+
+        if (!_repository.Exists(request.Username, request.Password))
+            return Unauthorized();
 
         var claims = new[]
         {
