@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="EmployeeManagementWPF.View.UserControls.CustomTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EmployeeManagementWPF.View.UserControls"
+             xmlns:converters="clr-namespace:EmployeeManagementWPF.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="200">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="boolToVisibilityConverter" />
+        <converters:InverseBooleanToVisibilityConverter x:Key="inverseBoolToVisibilityConverter" />
+    </UserControl.Resources>
+    <StackPanel>
+        <TextBlock Height="25" FontSize="15" Text="{Binding Label}"></TextBlock>
+        <TextBox x:Name="textBox" Height="45" VerticalContentAlignment="Center" FontSize="20"
+                 Visibility="{Binding IsPassword, Converter={StaticResource inverseBoolToVisibilityConverter}}"></TextBox>
+        <PasswordBox x:Name="passwordBox" Height="45" VerticalContentAlignment="Center" FontSize="20"
+                     Visibility="{Binding IsPassword, Converter={StaticResource boolToVisibilityConverter}}"></PasswordBox>
+    </StackPanel>
+</UserControl>
